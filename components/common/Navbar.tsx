@@ -1,5 +1,5 @@
 "use client"
-import { Home, Menu, Plus, Search, X, User, LogOut, ChevronDown } from "lucide-react"
+import {Menu, Plus, Search, X, User, LogOut, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,6 +13,9 @@ import Link from "next/link"
 import { signOut } from "next-auth/react"
 import { useAuth } from "@/context/useAuth"
 import { useState } from "react"
+
+import LogoIcon from "./LogoIcon"
+
 
 export default function Navbar() {
   const { user } = useAuth()
@@ -42,10 +45,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl" prefetch={true}>
-            <div className="bg-gradient-to-r from-zinc-800 to-gray-500 p-1.5 rounded-md text-white">
-              <Home className="w-5 h-5" />
+            <div className=" p-1.5 rounded-md text-white">
+             <LogoIcon/>
             </div>
-            <span className="hidden sm:inline">KidzTory</span>
           </Link>
 
           {/* Desktop Navigation */}
