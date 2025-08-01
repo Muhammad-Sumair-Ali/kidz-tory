@@ -28,3 +28,11 @@ export const getThemeColor = (theme: string) => {
     }
     return colors[mood.toLowerCase()] || colors.default
   }
+
+  export const hero_colors = {
+    primary: "#6B46C1",
+    secondary: "#FBBF24",
+    accent: "#F472B6",
+    background: "#E0F2FE", 
+    text: "#1E3A8A",
+  };

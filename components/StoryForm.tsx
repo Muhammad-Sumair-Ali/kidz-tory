@@ -7,7 +7,7 @@ import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { FormData } from "@/types/story-form";
-import { Step1, Step2, Step3, Step4, Step5, Step6} from "./resuseable/story-steps";
+import { Step1, StepLanguage, Step2, Step3, Step4, Step5, Step6} from "./resuseable/story-steps";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
@@ -37,6 +37,7 @@ const StoryForm = () => {
   const validateStep = useCallback(async () => {
     const fieldsPerStep: Array<Array<keyof FormData>> = [
       ["storyPrompt"], 
+      ["language"],     
       ["ageGroup"],
       ["favoriteThings"],
       ["world"], 
@@ -89,7 +90,7 @@ const onSubmit: SubmitHandler<FormData> = async (data) => {
       imageUrl: story.imageUrl || "",
       title: story.title || ""
     };
-     
+     console.log("story",story)
      setFormData({...formData});
     router.push("/user-stories");
   } catch (error) {
@@ -102,6 +103,7 @@ const onSubmit: SubmitHandler<FormData> = async (data) => {
 
   const steps = [
     <Step1 key="step1" register={register} errors={errors} control={control} />,
+    <StepLanguage key="stepLanguage" control={control} errors={errors} register={register} />,
     <Step2 key="step2" control={control} errors={errors} register={register} />,
     <Step3 key="step3" control={control} errors={errors} register={register} />,
     <Step4 key="step4" control={control} errors={errors} register={register} />,
@@ -133,10 +135,10 @@ const onSubmit: SubmitHandler<FormData> = async (data) => {
                 <>
                   <div className="mb-6">
                     <p className="text-sm sm:text-base text-gray-600 mb-2">
-                      Step {currentStep + 1} of 6
+                      Step {currentStep + 1} of 7
                     </p>
                     <div className="flex justify-center gap-2">
-                      {Array.from({ length: 6 }).map((_, index) => (
+                      {Array.from({ length: 7 }).map((_, index) => (
                         <div
                           key={index}
                           className={`w-3 h-3 rounded-full transition-all duration-300 ${
@@ -159,16 +161,11 @@ const onSubmit: SubmitHandler<FormData> = async (data) => {
                       </Button>
                     )}
                     <Button
-                      onClick={currentStep === 5 ? () => handleSubmit(onSubmit)() : nextStep}
+                      onClick={currentStep === 6 ? () => handleSubmit(onSubmit)() : nextStep}
                       disabled={isLoading}
-                      className="w-32 py-2 transform hover:scale-105 transition-all duration-300"
-                      style={{
-                        backgroundColor: storyForm_colors.secondary,
-                        color: "white",
-                        borderRadius: "1rem",
-                      }}
-                    >
-                      {currentStep === 5 ? "Generate Story" : "Next"}
+                      className="w-32 py-2 transform hover:scale-105  transition-all duration-300 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-500  to-purple-600 hover:bg-blue-600 shadow-xl cursor-pointer"
+                    > 
+                      {currentStep === 7 ? "Generate Story" : "Next"}
                     </Button>
                   </div>
                 </>

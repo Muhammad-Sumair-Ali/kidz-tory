@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
@@ -7,13 +6,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { BookOpen, Plus, Info, Sparkles, Globe, Palette, Heart, Users, Languages, Star, Play, Eye } from "lucide-react"
-import Image from "next/image"
+import { BookOpen, Plus} from "lucide-react"
 import { useCustomHook } from "@/hooks/useFetch"
 import { useAuth } from "@/context/useAuth"
 import StoryReader from "@/components/resuseable/story-reader"
@@ -60,12 +53,6 @@ const Results: React.FC = () => {
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           {/* Header Section */}
           <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <BookOpen className="h-8 w-8 text-blue-600" />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Your Story Collection
-              </h1>
-            </div>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Discover all the magical stories you&apos;ve created with KidzTory AI
             </p>
@@ -91,6 +78,7 @@ const Results: React.FC = () => {
               <Button
                 onClick={handleCreateNewStory}
                 size="lg"
+                variant={"kids"}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-5 w-5 mr-2" />

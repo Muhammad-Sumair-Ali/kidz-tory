@@ -23,32 +23,57 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
   const [isReading, setIsReading] = useState(false)
   const [pages, setPages] = useState<string[]>([])
 
-  // Split story into pages (approximately 150-200 characters per page for kids)
+  const isUrduText = (text: string): boolean => {
+    const urduRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/
+    return urduRegex.test(text)
+  }
+
   useEffect(() => {
     if (story?.story) {
-      const sentences = story.story.split(/[.!?]+/).filter((s: string) => s.trim().length > 0)
+      const storyText = story.story.trim()
+      
+      if (!storyText) {
+        setPages(['No story content available'])
+        return
+      }
+
+      const isUrdu = isUrduText(storyText)
+      
+      let sentences: string[]
+      
+      if (isUrdu) {
+        sentences = storyText.split(/[۔؟!]+/).filter((s: string) => s.trim().length > 0)
+      } else {
+        sentences = storyText.split(/[.!?]+/).filter((s: string) => s.trim().length > 0)
+      }
+
       const storyPages: string[] = []
       let currentPageText = ""
+      
+      const maxPageLength = isUrdu ? 150 : 200
 
-      sentences.forEach((sentence: string, ) => {
+      sentences.forEach((sentence: string) => {
         const trimmedSentence = sentence.trim()
         if (trimmedSentence) {
-          const potentialPage = currentPageText + (currentPageText ? ". " : "") + trimmedSentence + "."
+          const sentenceEnding = isUrdu ? "۔" : "."
+          const separator = currentPageText ? (isUrdu ? "۔ " : ". ") : ""
+          const potentialPage = currentPageText + separator + trimmedSentence + sentenceEnding
 
-          if (potentialPage.length > 200 && currentPageText.length > 0) {
-            storyPages.push(currentPageText + ".")
+          if (potentialPage.length > maxPageLength && currentPageText.length > 0) {
+            storyPages.push(currentPageText + sentenceEnding)
             currentPageText = trimmedSentence
           } else {
-            currentPageText = potentialPage.replace(/\.$/, "")
+            currentPageText = potentialPage.replace(new RegExp(`\\${sentenceEnding}$`), "")
           }
         }
       })
 
       if (currentPageText.trim()) {
-        storyPages.push(currentPageText + ".")
+        const sentenceEnding = isUrdu ? "۔" : "."
+        storyPages.push(currentPageText + sentenceEnding)
       }
 
-      setPages(storyPages.length > 0 ? storyPages : [story.story])
+      setPages(storyPages.length > 0 ? storyPages : [storyText])
     }
   }, [story])
 
@@ -65,31 +90,97 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
   }
 
   const goToPage = (pageIndex: number) => {
-    setCurrentPage(pageIndex)
+    if (pageIndex >= 0 && pageIndex < pages.length) {
+      setCurrentPage(pageIndex)
+    }
   }
 
   const restartStory = () => {
     setCurrentPage(0)
+    if (isReading) {
+      window.speechSynthesis.cancel()
+      setIsReading(false)
+    }
   }
 
-  // Text-to-speech functionality
   const toggleReading = () => {
     if (isReading) {
       window.speechSynthesis.cancel()
       setIsReading(false)
     } else {
-      const utterance = new SpeechSynthesisUtterance(pages[currentPage])
-      utterance.rate = 0.8
+      const currentText = pages[currentPage]
+      if (!currentText || currentText.trim() === '') return
+
+      const utterance = new SpeechSynthesisUtterance(currentText)
+      const isUrdu = isUrduText(currentText)
+      
+      if (isUrdu) {
+        // Try to find Urdu voice
+        const voices = window.speechSynthesis.getVoices()
+        const urduVoice = voices.find(voice => 
+          voice.lang.includes('ur') || 
+          voice.lang.includes('hi') || 
+          voice.name.toLowerCase().includes('urdu')
+        )
+        
+        if (urduVoice) {
+          utterance.voice = urduVoice
+        }
+        utterance.lang = 'ur-PK' // Urdu Pakistan
+        utterance.rate = 0.7 // Slower for Urdu
+      } else {
+        utterance.lang = 'en-US'
+        utterance.rate = 0.8
+      }
+      
       utterance.pitch = 1.1
+      utterance.volume = 1.0
+      
+      utterance.onstart = () => setIsReading(true)
       utterance.onend = () => setIsReading(false)
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event)
+        setIsReading(false)
+      }
+      
       window.speechSynthesis.speak(utterance)
-      setIsReading(true)
     }
   }
 
-  const progress = ((currentPage + 1) / pages.length) * 100
+  // Load voices when component mounts
+  useEffect(() => {
+    const loadVoices = () => {
+      window.speechSynthesis.getVoices()
+    }
+    
+    loadVoices()
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices
+    }
+  }, [])
+
+  // Stop speech when component unmounts or dialog closes
+  useEffect(() => {
+    return () => {
+      if (isReading) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [isReading])
+
+  useEffect(() => {
+    if (!isOpen && isReading) {
+      window.speechSynthesis.cancel()
+      setIsReading(false)
+    }
+  }, [isOpen, isReading])
+
+  const progress = pages.length > 0 ? ((currentPage + 1) / pages.length) * 100 : 0
 
   if (!story) return null
+
+  // Check if current page text is Urdu for styling
+  const currentPageIsUrdu = pages[currentPage] ? isUrduText(pages[currentPage]) : false
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -106,6 +197,11 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
                 <Badge className="bg-purple-100 text-purple-800 border-purple-200">
                   Page {currentPage + 1} of {pages.length}
                 </Badge>
+                {currentPageIsUrdu && (
+                  <Badge className="bg-green-100 text-green-800 border-green-200">
+                    اردو
+                  </Badge>
+                )}
               </div>
             </div>
             <Progress value={progress} className="w-full h-2 mt-2" />
@@ -144,13 +240,22 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
                   <div className="text-center mb-6">
                     <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
                       <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
-                      Chapter {currentPage + 1}
+                      {currentPageIsUrdu ? `باب ${currentPage + 1}` : `Chapter ${currentPage + 1}`}
                     </div>
                   </div>
 
                   <div className="flex-1 flex items-center justify-center">
-                    <p className="text-lg leading-relaxed text-gray-800 text-center font-medium">
-                      {pages[currentPage]}
+                    <p 
+                      className={`text-lg leading-relaxed text-gray-800 text-center font-medium ${
+                        currentPageIsUrdu ? 'font-urdu text-right text-xl leading-loose' : ''
+                      }`}
+                      style={currentPageIsUrdu ? { 
+                        fontFamily: 'Noto Nastaliq Urdu, Arial, sans-serif',
+                        direction: 'rtl',
+                        unicodeBidi: 'embed'
+                      } : {}}
+                    >
+                      {pages[currentPage] || 'Loading...'}
                     </p>
                   </div>
 
@@ -161,16 +266,17 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
                       variant="outline"
                       size="sm"
                       className="flex items-center gap-2 bg-transparent"
+                      disabled={!pages[currentPage] || pages[currentPage].trim() === ''}
                     >
                       {isReading ? (
                         <>
                           <VolumeX className="h-4 w-4" />
-                          Stop Reading
+                          {currentPageIsUrdu ? 'رک جائیں' : 'Stop Reading'}
                         </>
                       ) : (
                         <>
                           <Volume2 className="h-4 w-4" />
-                          Read Aloud
+                          {currentPageIsUrdu ? 'بلند پڑھیں' : 'Read Aloud'}
                         </>
                       )}
                     </Button>
@@ -188,17 +294,17 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
                   className="flex items-center gap-2 bg-transparent"
                 >
                   <ChevronLeft className="h-5 w-5" />
-                  Previous
+                  {currentPageIsUrdu ? 'پچھلا' : 'Previous'}
                 </Button>
 
                 <div className="flex items-center gap-2">
                   <Button onClick={restartStory} variant="ghost" size="sm" className="flex items-center gap-2">
                     <RotateCcw className="h-4 w-4" />
-                    Restart
+                    {currentPageIsUrdu ? 'دوبارہ شروع' : 'Restart'}
                   </Button>
                   <Button onClick={onClose} variant="ghost" size="sm" className="flex items-center gap-2">
                     <Home className="h-4 w-4" />
-                    Close
+                    {currentPageIsUrdu ? 'بند کریں' : 'Close'}
                   </Button>
                 </div>
 
@@ -208,7 +314,7 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
                   size="lg"
                   className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
-                  Next
+                  {currentPageIsUrdu ? 'اگلا' : 'Next'}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </div>
@@ -222,6 +328,7 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
                     className={`w-3 h-3 rounded-full transition-all duration-200 ${
                       index === currentPage ? "bg-blue-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
                     }`}
+                    aria-label={`Go to page ${index + 1}`}
                   />
                 ))}
               </div>

@@ -6,12 +6,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { storyForm_colors } from "@/helpers/colors";
-import { 
-  BookOpen, 
-  Users, 
-  Heart, 
-  Globe, 
-  Target, 
+import {
+  BookOpen,
+  Users,
+  Heart,
+  Globe,
+  Target,
   Smile,
   Rocket,
   TreePine,
@@ -25,7 +25,7 @@ import {
   Gamepad2,
   Sparkles,
   Moon,
-  Zap
+  Zap,
 } from "lucide-react";
 
 // Step 1: Story Prompt
@@ -63,7 +63,53 @@ export const Step1: React.FC<{
   );
 };
 
-// Step 2: Age Group
+// Step 2: Language Selection
+export const StepLanguage: React.FC<{
+  register: any;
+  errors: any;
+  control: any;
+}> = ({ control, errors }) => {
+  const languages = ["English", "Urdu", "Roman Urdu "];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Globe className="w-6 h-6 text-purple-600" />
+        <Label
+          className="text-lg font-semibold"
+          style={{ color: storyForm_colors.text }}
+        >
+          Step 2: Choose your story language
+        </Label>
+      </div>
+      <div className="space-y-2">
+        <Controller
+          name="language"
+          control={control}
+          rules={{ required: "Please select a language" }}
+          render={({ field }) => (
+            <select
+              {...field}
+              className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none"
+              style={{ color: storyForm_colors.text }}
+            >
+              <option value="">Select a language</option>
+              {languages.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+      </div>
+      {errors.language && (
+        <p className="text-red-500 text-sm">{errors.language.message}</p>
+      )}
+    </div>
+  );
+};
+// Step 3: Age Group
 export const Step2: React.FC<{
   register: any;
   errors: any;
@@ -73,7 +119,7 @@ export const Step2: React.FC<{
     "1-5": Users,
     "6-10": Users,
     "11-15": Users,
-    "15 and above": Users
+    "15 and above": Users,
   };
 
   return (
@@ -127,7 +173,7 @@ export const Step2: React.FC<{
   );
 };
 
-// Step 3: Favorite Things
+// Step 4: Favorite Things
 export const Step3: React.FC<{
   register: any;
   errors: any;
@@ -161,19 +207,19 @@ export const Step3: React.FC<{
   );
 };
 
-// Step 4: Story World
+// Step 5: Story World
 export const Step4: React.FC<{
   register: any;
   errors: any;
   control: any;
 }> = ({ control, errors }) => {
   const worldIcons = {
-    "Space": Rocket,
-    "Jungle": TreePine,
+    Space: Rocket,
+    Jungle: TreePine,
     "Magical Kingdom": Crown,
-    "Underwater": Waves,
-    "School": School,
-    "Everyday Life": Home
+    Underwater: Waves,
+    School: School,
+    "Everyday Life": Home,
   };
 
   return (
@@ -234,18 +280,18 @@ export const Step4: React.FC<{
   );
 };
 
-// Step 5: Story Focus
+// Step 6: Story Focus
 export const Step5: React.FC<{
   register: any;
   errors: any;
   control: any;
 }> = ({ control, errors }) => {
   const focusIcons = {
-    "Kindness": Heart,
-    "Courage": Shield,
-    "Curiosity": Search,
-    "Friendship": UserCheck,
-    "Just for Fun": Gamepad2
+    Kindness: Heart,
+    Courage: Shield,
+    Curiosity: Search,
+    Friendship: UserCheck,
+    "Just for Fun": Gamepad2,
   };
 
   return (
@@ -308,10 +354,10 @@ export const Step6: React.FC<{
   control: any;
 }> = ({ control, errors }) => {
   const moodIcons = {
-    "Funny": Smile,
-    "Magical": Sparkles,
-    "Calm": Moon,
-    "Adventure": Zap
+    Funny: Smile,
+    Magical: Sparkles,
+    Calm: Moon,
+    Adventure: Zap,
   };
 
   return (

@@ -1,7 +1,11 @@
-
-import { genAI } from "@/lib/genai";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Story from "@/models/Story";
 import { generateAndUploadImage } from "../stability-image-handler";
+import { formatField, parseFavoriteThings, cleanTitle } from "@/utils/validationUtils";
+import { generateSimplePrompt, generateLanguageSpecificPrompt, generateImagePrompt } from "@/utils/promptGenerators";
+import { generateStoryText, generateStoryTitle } from "./textGenerationService";
+import { withRetry } from "@/utils/retryUtils";
+import { handleStoryGenerationError } from "@/utils/errorHandling";
 
 type StoryInput = {
   ageGroup: string | string[];
@@ -14,7 +18,22 @@ type StoryInput = {
   userId: string;
 };
 
-export async function generateAndSaveStory(input: StoryInput) {
+type StoryResult = {
+  id: string;
+  title: string;
+  ageGroup: string | string[];
+  language: string;
+  favoriteThings: string[];
+  world: string | string[];
+  theme: string | string[];
+  mood: string | string[];
+  story: string;
+  imageUrl: string | null;
+  userId: string;
+  prompt: string;
+};
+
+export async function generateAndSaveStory(input: StoryInput): Promise<StoryResult> {
   const {
     ageGroup,
     language,
@@ -26,84 +45,84 @@ export async function generateAndSaveStory(input: StoryInput) {
     userId,
   } = input;
 
-  const formatField = (field: string | string[]): string =>
-    Array.isArray(field) ? field.join(", ") : field;
+  try {
+    // Validate and format inputs
+    const parsedFavoriteThings = parseFavoriteThings(favoriteThings);
+    
+    const storyFields = {
+      ageGroup: formatField(ageGroup),
+      theme: formatField(theme),
+      mood: formatField(mood),
+      world: formatField(world),
+      favoriteThings: formatField(parsedFavoriteThings),
+    };
 
-  const parsedFavoriteThings =
-    typeof favoriteThings === "string"
-      ? favoriteThings
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : favoriteThings;
+    // Generate prompts
+    const prompt = storyPrompt 
+      ? generateLanguageSpecificPrompt(storyPrompt, language)
+      : generateSimplePrompt(storyFields, language);
+    
+    const titlePrompt = generateSimplePrompt(storyFields, language, true);
 
-  if (!Array.isArray(parsedFavoriteThings) || parsedFavoriteThings.length === 0) {
-    throw new Error("favoriteThings must not be empty");
+
+    // Generate story and title concurrently
+    const [storyResult, titleResult] = await Promise.all([
+      generateStoryText(prompt, language),
+      generateStoryTitle(titlePrompt, language),
+    ]);
+
+
+    // Generate image with error handling
+    let imageResult;
+    try {
+      const imagePrompt = generateImagePrompt(storyFields);
+      imageResult = await withRetry(() => generateAndUploadImage(imagePrompt), 2);
+    } catch(error:any)  {
+       throw new Error("Image Generation Failed. Limit Reached Sorry",error);
+    }
+
+    // Process results
+    const storyText = storyResult.text;
+    const storyTitle = cleanTitle(titleResult.text);
+
+    console.log("Generated story in language:", language);
+    console.log("Story length:", storyText.length);
+    console.log("Story preview:", storyText.substring(0, 200));
+
+    // Save to database
+    const story = new Story({
+      title: storyTitle,
+      ageGroup: storyFields.ageGroup,
+      language,
+      favoriteThings: parsedFavoriteThings,
+      world: storyFields.world,
+      theme: storyFields.theme,
+      mood: storyFields.mood,
+      story: storyText,
+      imageUrl: imageResult.success ? imageResult.imageUrl : null,
+      prompt,
+      createdBy: userId,
+      userId,
+    });
+
+    const saved = await story.save();
+
+    // Return result
+    return {
+      id: saved._id.toString(),
+      title: storyTitle,
+      ageGroup,
+      language,
+      favoriteThings: parsedFavoriteThings,
+      world,
+      theme,
+      mood,
+      story: storyText,
+      imageUrl: imageResult.success ? imageResult.imageUrl : null,
+      userId,
+      prompt,
+    };
+  } catch (error: any) {
+    handleStoryGenerationError(error);
   }
-
-  const prompt =
-    storyPrompt ||
-    [
-      `Write a fun and engaging story for children in the ${formatField(ageGroup)} age group.`,
-      `Set the story in a ${formatField(world)} world.`,
-      `The theme should be ${formatField(theme)} and the mood should be ${formatField(mood)}.`,
-      `Include these favorite things: ${formatField(parsedFavoriteThings)}.`,
-      `The story should be written in ${language} language.`,
-    ].join(" ");
-
-  const titlePrompt = `Generate a short and creative title (3 to 5 words) for a children's story with these settings:
-- Age Group: ${formatField(ageGroup)}
-- World: ${formatField(world)}
-- Theme: ${formatField(theme)}
-- Mood: ${formatField(mood)}
-- Favorite Things: ${formatField(parsedFavoriteThings)}
-`;
-
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-  const [storyResult, titleResult] = await Promise.all([
-    model.generateContent({ contents: [{ role: "user", parts: [{ text: prompt }] }] }),
-    model.generateContent({ contents: [{ role: "user", parts: [{ text: titlePrompt }] }] }),
-  ]);
-
-  const storyText = storyResult.response.text();
-  const storyTitle = titleResult.response.text().replace(/^["']|["']$/g, "").trim();
-
-  const imageResult = await generateAndUploadImage(prompt);
-  console.log("imageResult =>",imageResult) 
-  if (!imageResult.success) {
-    throw new Error("Image generation failed: " + imageResult.error);
-  }
-
-  const story = new Story({
-    title: storyTitle,
-    ageGroup: formatField(ageGroup),
-    language,
-    favoriteThings: parsedFavoriteThings,
-    world: formatField(world),
-    theme: formatField(theme),
-    mood: formatField(mood),
-    story: storyText,
-    imageUrl: imageResult.imageUrl,
-    prompt,
-    createdBy: userId,
-    userId,
-  });
-
-  const saved = await story.save();
-
-  return {
-    id: saved._id.toString(),
-    title: storyTitle,
-    ageGroup,
-    language,
-    favoriteThings: parsedFavoriteThings,
-    world,
-    theme,
-    mood,
-    story: storyText,
-    imageUrl: imageResult.imageUrl,
-    userId,
-    prompt,
-  };
 }

@@ -32,10 +32,10 @@ const AllStories: React.FC = () => {
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           {/* Header Section */}
           <div className="text-center mb-12">
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Discover all the magical stories you&apos;ve created with KidzTory
+            <h1 className="text-gray-900 text-4xl font-bold max-w-3xl mx-auto">
+              Discover all the magical stories created with KidzTory
               AI
-            </p>
+            </h1>
           </div>
 
           {/* Error State */}
@@ -75,18 +75,18 @@ const AllStories: React.FC = () => {
               </div>
             </>
           )}
-         {hasMore && <div className="text-center">
-            <button
-              onClick={handleLoadMore}
-              disabled={isLoading}
-              className="px-6 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {isLoading ? "Loading..." : "Load More"}
-            </button>
-          </div>}
+          {hasMore && (
+            <div className="text-center">
+              <button
+                onClick={handleLoadMore}
+                disabled={isLoading}
+                className="px-6 py-2 text-white bg-teal-600 rounded hover:bg-teal-700 disabled:opacity-50"
+              >
+                {isLoading ? "Loading..." : "Load More"}
+              </button>
+            </div>
+          )}
         </div>
-       
-       
       </div>
 
       <StoryReader
