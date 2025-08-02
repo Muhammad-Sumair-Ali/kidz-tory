@@ -118,5 +118,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    scroll-behavior: smooth
   }
+}
+
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }

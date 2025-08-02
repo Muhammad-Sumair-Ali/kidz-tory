@@ -1,39 +1,55 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import type React from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Info, Sparkles, Globe, Palette, Heart, Users, Languages, Star, Play, Eye } from "lucide-react"
-import Image from "next/image"
+import type React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  Info,
+  Sparkles,
+  Globe,
+  Palette,
+  Heart,
+  Users,
+  Languages,
+  Star,
+  Play,
+  Eye,
+} from "lucide-react";
+import Image from "next/image";
 import { getMoodColor, getThemeColor } from "@/helpers/colors";
+import { useState } from "react";
 
-
-
-const StoryCard = ({story,handleReadStory}:any) => {
+const StoryCard = ({ story, handleReadStory }: any) => {
+  const [open, setOpen] = useState(false);
   return (
-    <div>
+    <div className="z-20">
       <Card
         key={story._id}
-        className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md bg-white/80 backdrop-blur-sm"
+        className="group z-50 hover:shadow-xl transition-all duration-300 border-0 min-h-[540px] max-h-[540px] shadow-md bg-zinc-900 backdrop-blur-sm"
       >
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-3  h-[100px]">
           <div className="flex items-start justify-between">
-            <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
+            <CardTitle className="text-xl font-bold text-gray-200 group-hover:text-pink-600 transition-colors line-clamp-2">
               {story.title}&apos;s Adventure
             </CardTitle>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                //   onClick={() => setSelectedStory(story)}
+                  className="opacity-40 group-hover:opacity-100 transition-opacity"
                 >
-                  <Info className="h-4 w-4" />
+                  <Info className="h-4 w-4 text-white" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[80vh]">
@@ -144,18 +160,19 @@ const StoryCard = ({story,handleReadStory}:any) => {
           {story.imageUrl && (
             <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
               <Image
-                fill
-                src={story.imageUrl || "/placeholder.svg"}
+                width={360}
+                height={200}
+                src={story.imageUrl}
                 alt="Story illustration"
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                className="object-cover w-[400px] h-[210px] group-hover:scale-105 transition-transform duration-300"
               />
             </div>
           )}
           <div className="space-y-2">
-            <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">
+            <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
               {story.story}
             </p>
-            <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
+            <div className="flex items-center justify-between text-xs text-gray-400 pt-2">
               <span>{story.ageGroup}</span>
               <span>{story.language}</span>
             </div>
@@ -165,17 +182,18 @@ const StoryCard = ({story,handleReadStory}:any) => {
           <div className="flex gap-2 pt-2">
             <Button
               onClick={() => handleReadStory(story)}
-              className="flex-1 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white"
+              className="flex-1 bg-gradient-to-r from-purple-700 to-pink-600 px-4 py-4 rounded-lg hover:from-purple-700 text-white"
               size="sm"
             >
               <Play className="h-4 w-4 mr-2" />
               Read Story
             </Button>
+
             <Button
+              onClick={() => setOpen(true)}
               variant="outline"
               size="sm"
               className="flex items-center gap-2 bg-transparent"
-              // onClick={() => setSelectedStory(story)}
             >
               <Eye className="h-4 w-4" />
               Details

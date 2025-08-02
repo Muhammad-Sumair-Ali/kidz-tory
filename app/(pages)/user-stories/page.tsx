@@ -1,79 +1,103 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { BookOpen, Plus} from "lucide-react"
-import { useCustomHook } from "@/hooks/useFetch"
-import { useAuth } from "@/context/useAuth"
-import StoryReader from "@/components/resuseable/story-reader"
-import StoryCard from "@/components/resuseable/StoryCard"
-
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { BookOpen, Plus, RefreshCw } from "lucide-react";
+import StoryReader from "@/components/resuseable/story-reader";
+import StoryCard from "@/components/resuseable/StoryCard";
+import LoadingStoryCard from "@/components/resuseable/LoadingstoryCard";
+import { useCustomHook } from "@/hooks/useFetch";
+import { useSession } from "next-auth/react";
 
 const Results: React.FC = () => {
-  const router = useRouter()
-  const { user } = useAuth()
-  const { fetchStories, stories, loading, error } = useCustomHook()
-  const [storyReaderOpen, setStoryReaderOpen] = useState(false)
-  const [currentReadingStory, setCurrentReadingStory] = useState<any>(null)
-
-  useEffect(() => {
-    if (!user?._id) return
-    fetchStories(user._id)
-  }, [user?._id])
+  const router = useRouter();
+  const { data } = useSession();
+  const { useUserStories } = useCustomHook(); 
+  const [storyReaderOpen, setStoryReaderOpen] = useState(false);
+  const [currentReadingStory, setCurrentReadingStory] = useState<any>(null);
+  
+  const {
+    data: stories = [],
+    isLoading: loading,
+    error,
+    refetch,
+    isFetching,
+  } = useUserStories(data?.user?.id ?? null);
 
   const handleCreateNewStory = () => {
-    router.push("/")
-  }
+    router.push("/");
+  };
 
   const handleReadStory = (story: any) => {
-    setCurrentReadingStory(story)
-    setStoryReaderOpen(true)
-  }
+    setCurrentReadingStory(story);
+    setStoryReaderOpen(true);
+  };
 
-
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 font-medium">Loading your magical stories...</p>
-        </div>
-      </div>
-    )
-  }
+  const handleRefresh = () => {
+    refetch();
+  };
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gray-950 text-white py-16 relative">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           {/* Header Section */}
           <div className="text-center mb-12">
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Discover all the magical stories you&apos;ve created with KidzTory AI
-            </p>
+            <div className="flex items-center justify-center gap-4">
+              <p className="text-gray-200 text-4xl font-bold -mt-6 max-w-3xl mx-auto">
+                Discover all the magical stories you&apos;ve created with KidzTory AI
+              </p>
+              {/* Refresh Button */}
+              <button
+                onClick={handleRefresh}
+                disabled={isFetching}
+                className="mt-2 p-2 text-gray-300 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Refresh stories"
+              >
+                <RefreshCw className={`h-5 w-5 ${isFetching ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
           </div>
 
           {/* Error State */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-red-600 text-center">{error}</p>
+              <p className="text-red-600 text-center">{error.message}</p>
+              <div className="text-center mt-2">
+                <button
+                  onClick={handleRefresh}
+                  className="text-red-600 underline hover:text-red-800"
+                >
+                  Try again
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading && (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+              {[1, 2, 3, 4, 5, 6]?.map((_, index) => (
+                <LoadingStoryCard key={index} />
+              ))}
             </div>
           )}
 
           {/* Empty State */}
-          {!loading && stories?.length === 0 && (
+          {!loading && stories?.length === 0 && !error && (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <BookOpen className="h-12 w-12 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">No stories yet</h3>
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+                No stories yet
+              </h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Start your storytelling journey by creating your first magical story!
+                Start your storytelling journey by creating your first magical
+                story!
               </p>
               <Button
                 onClick={handleCreateNewStory}
@@ -92,7 +116,11 @@ const Results: React.FC = () => {
             <>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
                 {stories.map((story: any) => (
-                 <StoryCard handleReadStory={handleReadStory} story={story} key={story._id} />
+                  <StoryCard
+                    handleReadStory={handleReadStory}
+                    story={story}
+                    key={story._id}
+                  />
                 ))}
               </div>
 
@@ -107,7 +135,21 @@ const Results: React.FC = () => {
                   Create Another Story
                 </Button>
               </div>
+
+              {/* Stories Count */}
+              <div className="text-center mt-4">
+                <p className="text-gray-400 text-sm">
+                  You have created {stories.length} magical {stories.length === 1 ? 'story' : 'stories'}
+                </p>
+              </div>
             </>
+          )}
+
+          {/* Background refresh indicator */}
+          {isFetching && !loading && (
+            <div className="fixed bottom-4 right-4 bg-blue-600 text-white px-3 py-2 rounded-lg shadow-lg text-sm">
+              Refreshing stories...
+            </div>
           )}
         </div>
       </div>
@@ -116,12 +158,12 @@ const Results: React.FC = () => {
         story={currentReadingStory}
         isOpen={storyReaderOpen}
         onClose={() => {
-          setStoryReaderOpen(false)
-          setCurrentReadingStory(null)
+          setStoryReaderOpen(false);
+          setCurrentReadingStory(null);
         }}
       />
     </>
-  )
-}
+  );
+};
 
-export default Results
+export default Results;

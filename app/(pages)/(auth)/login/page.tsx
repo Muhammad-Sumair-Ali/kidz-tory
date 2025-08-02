@@ -1,16 +1,34 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuthentication } from "@/hooks/useAuth";
 import React from "react";
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 48 48">
-    <path fill="#EA4335" d="M24 9.5c3.6 0 6.6 1.4 8.7 3.6l6.5-6.5C35.4 2.5 30.1 0 24 0 14.6 0 6.8 5.8 3 14.2l7.5 5.8C12.1 14.1 17.5 9.5 24 9.5z" />
-    <path fill="#34A853" d="M46.1 24.5c0-1.6-.1-3.2-.4-4.7H24v9.1h12.5c-.5 2.8-2.2 5.2-4.6 6.8l7.1 5.5c4.1-3.8 6.5-9.4 6.5-16.7z" />
-    <path fill="#4A90E2" d="M10.5 28.4c-1.1-2.5-1.7-5.3-1.7-8.4s.6-5.9 1.7-8.4L3 14.2C1.1 17.9 0 21.8 0 25.9s1.1 8 3 11.7l7.5-5.8z" />
-    <path fill="#FBBC05" d="M24 48c6.5 0 12-2.1 16-5.8l-7.5-5.8c-2.2 1.5-5 2.4-8.5 2.4-6.5 0-12.1-4.4-14.1-10.3l-7.5 5.8C6.8 42.2 14.6 48 24 48z" />
+    <path
+      fill="#EA4335"
+      d="M24 9.5c3.6 0 6.6 1.4 8.7 3.6l6.5-6.5C35.4 2.5 30.1 0 24 0 14.6 0 6.8 5.8 3 14.2l7.5 5.8C12.1 14.1 17.5 9.5 24 9.5z"
+    />
+    <path
+      fill="#34A853"
+      d="M46.1 24.5c0-1.6-.1-3.2-.4-4.7H24v9.1h12.5c-.5 2.8-2.2 5.2-4.6 6.8l7.1 5.5c4.1-3.8 6.5-9.4 6.5-16.7z"
+    />
+    <path
+      fill="#4A90E2"
+      d="M10.5 28.4c-1.1-2.5-1.7-5.3-1.7-8.4s.6-5.9 1.7-8.4L3 14.2C1.1 17.9 0 21.8 0 25.9s1.1 8 3 11.7l7.5-5.8z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M24 48c6.5 0 12-2.1 16-5.8l-7.5-5.8c-2.2 1.5-5 2.4-8.5 2.4-6.5 0-12.1-4.4-14.1-10.3l-7.5 5.8C6.8 42.2 14.6 48 24 48z"
+    />
   </svg>
 );
 
@@ -23,7 +41,7 @@ const LoginDialog = () => {
         <Button variant="outline">Open Login</Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md z-50">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-semibold">
             Welcome to Kidztory
@@ -34,7 +52,7 @@ const LoginDialog = () => {
           <Button
             onClick={() => handleSocialLogin("google")}
             variant="outline"
-            className="w-full gap-2 border rounded-md text-sm"
+            className="w-full gap-2 border cursor-pointer rounded-md text-sm"
           >
             <GoogleIcon />
             Login with Google

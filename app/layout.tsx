@@ -1,17 +1,17 @@
 import Providers from "@/components/resuseable/Provider";
-import "./globals.css"
-import Navbar from "@/components/common/Navbar";
+import "./globals.css";
+import { Toaster } from "react-hot-toast";
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <Providers>
-          <Navbar/>
+          <Toaster position="top-center" />
+
           {children}
         </Providers>
       </body>

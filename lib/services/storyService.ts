@@ -85,10 +85,6 @@ export async function generateAndSaveStory(input: StoryInput): Promise<StoryResu
     const storyText = storyResult.text;
     const storyTitle = cleanTitle(titleResult.text);
 
-    console.log("Generated story in language:", language);
-    console.log("Story length:", storyText.length);
-    console.log("Story preview:", storyText.substring(0, 200));
-
     // Save to database
     const story = new Story({
       title: storyTitle,

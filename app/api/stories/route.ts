@@ -9,8 +9,6 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "6");
-    console.log("page", page);
-    console.log("limit", limit);
     const skip = (page - 1) * limit;
 
     const stories = await Story.find()

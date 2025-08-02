@@ -1,10 +1,10 @@
 "use client"
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export const useAuthentication = () => {
   const [email, setEmail] = useState("");
@@ -21,9 +21,9 @@ export const useAuthentication = () => {
     });
 
     if (result?.error) {
-     alert(result.error || "error logging in");
+     toast.error(result.error || "error logging in");
     } else {
-       alert("Login successfull!");
+       toast.success("Login successfull!");
       router.push("/");
     }
   };
@@ -31,12 +31,10 @@ export const useAuthentication = () => {
   const handleSocialLogin = async (provider: string) => {
     setIsLoading(true);
     try {
-      await signIn(provider, { callbackUrl: "/" });
-    //   toast.success("Login successfull!");
-       alert("Login successfull!");
-
+      await signIn(provider);
+      toast.success("Login successfull!");
     } catch {
-     alert("Authentication failed");
+     toast.error("Authentication failed");
       setIsLoading(false);
     }
   };
@@ -75,19 +73,14 @@ export const useAuthentication = () => {
     setIsLoading(true);
 
     if (!email || !password || !fullName) {
-    //   toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields");
       setIsLoading(false);
       return;
     }
-
-    if (password !== confirmPassword) {
-    //   toast.error("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
+ 
 
     if (passwordStrength < 2) {
-    //   toast.error("Please use a stronger password");
+      toast.error("Please use a stronger password");
       setIsLoading(false);
       return;
     }
@@ -99,13 +92,13 @@ export const useAuthentication = () => {
         fullName,
       });
 
-    //   toast.success("Registration successful! Please log in.");
+      toast.success("Registration successful! Please log in.");
       router.push("/login");
 
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.error || error.message || "Registration failed";
-    //   toast.error(errorMessage || "Registration error");
+      toast.error(errorMessage || "Registration error");
     } finally {
       setIsLoading(false);
     }

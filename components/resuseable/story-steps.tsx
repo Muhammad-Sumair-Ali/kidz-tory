@@ -5,7 +5,6 @@ import { Controller } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { storyForm_colors } from "@/helpers/colors";
 import {
   BookOpen,
   Users,
@@ -37,11 +36,8 @@ export const Step1: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <BookOpen className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
+        <BookOpen className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
           Step 1: What&apos;s the story about?
         </Label>
       </div>
@@ -51,13 +47,12 @@ export const Step1: React.FC<{
             required: "Please provide a story idea",
           })}
           placeholder="Example: A brave puppy explores a magical forest to find a hidden treasure..."
-          className="w-full pl-12 px-4 py-5 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none resize-y"
-          style={{ color: storyForm_colors.text }}
+          className="w-full pl-12 px-4 py-5 rounded-xl border-2 border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:border-purple-400 focus:outline-none resize-y"
           rows={4}
         />
       </div>
       {errors.storyPrompt && (
-        <p className="text-red-500 text-sm">{errors.storyPrompt.message}</p>
+        <p className="text-red-400 text-sm">{errors.storyPrompt.message}</p>
       )}
     </div>
   );
@@ -74,11 +69,8 @@ export const StepLanguage: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <Globe className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
+        <Globe className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
           Step 2: Choose your story language
         </Label>
       </div>
@@ -90,12 +82,11 @@ export const StepLanguage: React.FC<{
           render={({ field }) => (
             <select
               {...field}
-              className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none"
-              style={{ color: storyForm_colors.text }}
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-600 bg-gray-700/50 text-white focus:border-purple-400 focus:outline-none"
             >
-              <option value="">Select a language</option>
+              <option value="" className="bg-gray-700 text-gray-400">Select a language</option>
               {languages.map((lang) => (
-                <option key={lang} value={lang}>
+                <option key={lang} value={lang} className="bg-gray-700 text-white">
                   {lang}
                 </option>
               ))}
@@ -104,11 +95,12 @@ export const StepLanguage: React.FC<{
         />
       </div>
       {errors.language && (
-        <p className="text-red-500 text-sm">{errors.language.message}</p>
+        <p className="text-red-400 text-sm">{errors.language.message}</p>
       )}
     </div>
   );
 };
+
 // Step 3: Age Group
 export const Step2: React.FC<{
   register: any;
@@ -125,12 +117,9 @@ export const Step2: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <Users className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
-          Step 2: Who&apos;s the story for?
+        <Users className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
+          Step 3: Who&apos;s the story for?
         </Label>
       </div>
       <div className="space-y-2">
@@ -143,9 +132,9 @@ export const Step2: React.FC<{
               control={control}
               rules={{ required: "Please select at least one age group" }}
               render={({ field }) => (
-                <label className="flex justify-between items-center border-fuchsia-900/40 border-2 text-black bg-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-fuchsia-900/10 hover:scale-105 transition-all duration-200 w-full">
+                <label className="flex justify-between items-center border-2 border-gray-600 bg-gray-700/50 text-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-600/50 hover:border-purple-400/50 hover:scale-105 transition-all duration-200 w-full">
                   <div className="flex items-center gap-3">
-                    <IconComponent className="w-5 h-5 text-purple-600" />
+                    <IconComponent className="w-5 h-5 text-purple-400" />
                     <span className="font-medium">{age}</span>
                   </div>
                   <Checkbox
@@ -158,7 +147,7 @@ export const Step2: React.FC<{
                           : current.filter((item: string) => item !== age)
                       );
                     }}
-                    className="h-5 w-5 text-purple-800 border-gray-600"
+                    className="h-5 w-5 text-purple-400 border-gray-500 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                   />
                 </label>
               )}
@@ -167,7 +156,7 @@ export const Step2: React.FC<{
         })}
       </div>
       {errors.ageGroup && (
-        <p className="text-red-500 text-sm">{errors.ageGroup.message}</p>
+        <p className="text-red-400 text-sm">{errors.ageGroup.message}</p>
       )}
     </div>
   );
@@ -182,12 +171,9 @@ export const Step3: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <Heart className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
-          Step 3: What are your favorite things?
+        <Heart className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
+          Step 4: What are your favorite things?
         </Label>
       </div>
       <div className="relative">
@@ -196,12 +182,11 @@ export const Step3: React.FC<{
             required: "Please enter your favorite things",
           })}
           placeholder="Example: Dragons, rainbows, or soccer..."
-          className="w-full pl-12 px-4 py-5 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none"
-          style={{ color: storyForm_colors.text }}
+          className="w-full pl-12 px-4 py-5 rounded-xl border-2 border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:border-purple-400 focus:outline-none"
         />
       </div>
       {errors.favoriteThings && (
-        <p className="text-red-500 text-sm">{errors.favoriteThings.message}</p>
+        <p className="text-red-400 text-sm">{errors.favoriteThings.message}</p>
       )}
     </div>
   );
@@ -225,12 +210,9 @@ export const Step4: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 ml-4">
-        <Globe className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
-          Step 4: Where does the story happen?
+        <Globe className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
+          Step 5: Where does the story happen?
         </Label>
       </div>
       <div className="space-y-2">
@@ -250,9 +232,9 @@ export const Step4: React.FC<{
               control={control}
               rules={{ required: "Please select at least one story world" }}
               render={({ field }) => (
-                <label className="flex justify-between items-center border-fuchsia-900/40 border-2 text-black bg-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-fuchsia-900/10 hover:scale-105 transition-all duration-200 w-full">
+                <label className="flex justify-between items-center border-2 border-gray-600 bg-gray-700/50 text-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-600/50 hover:border-purple-400/50 hover:scale-105 transition-all duration-200 w-full">
                   <div className="flex items-center gap-3">
-                    <IconComponent className="w-5 h-5 text-purple-600" />
+                    <IconComponent className="w-5 h-5 text-purple-400" />
                     <span className="font-medium">{world}</span>
                   </div>
                   <Checkbox
@@ -265,7 +247,7 @@ export const Step4: React.FC<{
                           : current.filter((item: string) => item !== world)
                       );
                     }}
-                    className="h-5 w-5 text-purple-800 border-gray-600"
+                    className="h-5 w-5 text-purple-400 border-gray-500 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                   />
                 </label>
               )}
@@ -274,7 +256,7 @@ export const Step4: React.FC<{
         })}
       </div>
       {errors.world && (
-        <p className="text-red-500 text-sm">{errors.world.message}</p>
+        <p className="text-red-400 text-sm">{errors.world.message}</p>
       )}
     </div>
   );
@@ -297,12 +279,9 @@ export const Step5: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 ml-4">
-        <Target className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
-          Step 5: What should the story teach or focus on?
+        <Target className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
+          Step 6: What should the story teach or focus on?
         </Label>
       </div>
       <div className="space-y-2">
@@ -316,9 +295,9 @@ export const Step5: React.FC<{
                 control={control}
                 rules={{ required: "Please select at least one story focus" }}
                 render={({ field }) => (
-                  <label className="flex justify-between items-center border-fuchsia-900/40 border-2 text-black bg-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-fuchsia-900/10 hover:scale-105 transition-all duration-200 w-full">
+                  <label className="flex justify-between items-center border-2 border-gray-600 bg-gray-700/50 text-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-600/50 hover:border-purple-400/50 hover:scale-105 transition-all duration-200 w-full">
                     <div className="flex items-center gap-3">
-                      <IconComponent className="w-5 h-5 text-purple-600" />
+                      <IconComponent className="w-5 h-5 text-purple-400" />
                       <span className="font-medium">{focus}</span>
                     </div>
                     <Checkbox
@@ -331,7 +310,7 @@ export const Step5: React.FC<{
                             : current.filter((item: string) => item !== focus)
                         );
                       }}
-                      className="h-5 w-5 text-purple-800 border-gray-600"
+                      className="h-5 w-5 text-purple-400 border-gray-500 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                     />
                   </label>
                 )}
@@ -341,13 +320,13 @@ export const Step5: React.FC<{
         )}
       </div>
       {errors.theme && (
-        <p className="text-red-500 text-sm">{errors.theme.message}</p>
+        <p className="text-red-400 text-sm">{errors.theme.message}</p>
       )}
     </div>
   );
 };
 
-// Step 6: Story Mood
+// Step 7: Story Mood
 export const Step6: React.FC<{
   register: any;
   errors: any;
@@ -363,12 +342,9 @@ export const Step6: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <Smile className="w-6 h-6 text-purple-600" />
-        <Label
-          className="text-lg font-semibold"
-          style={{ color: storyForm_colors.text }}
-        >
-          Step 6: What&apos;s the mood of the story?
+        <Smile className="w-6 h-6 text-purple-400" />
+        <Label className="text-lg font-semibold text-white">
+          Step 7: What&apos;s the mood of the story?
         </Label>
       </div>
       <div className="space-y-2">
@@ -381,9 +357,9 @@ export const Step6: React.FC<{
               control={control}
               rules={{ required: "Please select at least one story mood" }}
               render={({ field }) => (
-                <label className="flex justify-between items-center border-fuchsia-900/40 border-2 text-black bg-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-fuchsia-900/10 hover:scale-105 transition-all duration-200 w-full">
+                <label className="flex justify-between items-center border-2 border-gray-600 bg-gray-700/50 text-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-600/50 hover:border-purple-400/50 hover:scale-105 transition-all duration-200 w-full">
                   <div className="flex items-center gap-3">
-                    <IconComponent className="w-5 h-5 text-purple-600" />
+                    <IconComponent className="w-5 h-5 text-purple-400" />
                     <span className="font-medium">{mood}</span>
                   </div>
                   <Checkbox
@@ -396,7 +372,7 @@ export const Step6: React.FC<{
                           : current.filter((item: string) => item !== mood)
                       );
                     }}
-                    className="h-5 w-5 text-purple-800 border-gray-600"
+                    className="h-5 w-5 text-purple-400 border-gray-500 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                   />
                 </label>
               )}
@@ -405,7 +381,7 @@ export const Step6: React.FC<{
         })}
       </div>
       {errors.mood && (
-        <p className="text-red-500 text-sm">{errors.mood.message}</p>
+        <p className="text-red-400 text-sm">{errors.mood.message}</p>
       )}
     </div>
   );

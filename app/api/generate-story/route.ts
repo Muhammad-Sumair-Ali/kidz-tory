@@ -1,6 +1,7 @@
 import { connectDb } from "@/config/db";
 import { generateAndSaveStory } from "@/lib/services/storyService";
-import { NextRequest } from "next/server";
+import Story from "@/models/Story";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,6 +9,24 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const data = body.reqData || body;
+    if (!data.userId) {
+      return NextResponse.json(
+        { success: false, error: "stories not found" },
+        { status: 404 }
+      );
+    }
+
+    const stories = await Story.find({ userId: data.userId });
+
+    if (stories.length >= 1) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unable to generate Story. You have reached the limit.",
+        },
+        { status: 403 }
+      );
+    }
 
     const requiredFields = [
       "userId",
@@ -28,7 +47,10 @@ export async function POST(req: NextRequest) {
 
     if (missing.length) {
       return Response.json(
-        { success: false, error: `Missing or invalid fields: ${missing.join(", ")}` },
+        {
+          success: false,
+          error: `Missing or invalid fields: ${missing.join(", ")}`,
+        },
         { status: 400 }
       );
     }
