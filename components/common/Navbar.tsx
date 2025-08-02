@@ -27,7 +27,12 @@ import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
-const NEXT_PUBLIC_ADMIN_EMAIL = [process.env.NEXT_PUBLIC_ADMIN_EMAIL!]
+// Admin emails - you can modify this list
+const ADMIN_EMAILS = [
+  "admin@kidztory.com",
+  "sumair@kidztory.com", // Add your email here
+  // Add more admin emails as needed
+];
 
 const UserSection: React.FC = () => {
   const { data: session } = useSession();
@@ -99,11 +104,11 @@ const UserSection: React.FC = () => {
 };
 
 // Admin Link Component
-const AdminLink: React.FC = () => { 
+const AdminLink: React.FC = () => {
   const { data: session } = useSession();
   
   // Check if current user is admin
-  const isAdmin = session?.user?.email && NEXT_PUBLIC_ADMIN_EMAIL.includes(session.user.email);
+  const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email);
   
   if (!isAdmin) {
     return null;
@@ -183,6 +188,11 @@ const Navbar = () => {
                 How it Works
               </button>
             </Link>
+            <Link href={"/about"}>
+              <button className="text-gray-300 hover:text-white transition-colors font-medium">
+                About
+              </button>
+            </Link>
             
             <AdminLink />
 
@@ -239,6 +249,11 @@ const Navbar = () => {
             <Link href={"/how-it-works"}>
               <button className="text-xl text-gray-300 hover:text-purple-400 transition-colors font-medium">
                 How it Works
+              </button>
+            </Link>
+            <Link href={"/about"}>
+              <button className="text-xl text-gray-300 hover:text-purple-400 transition-colors font-medium">
+                About
               </button>
             </Link>
             <AdminLink />

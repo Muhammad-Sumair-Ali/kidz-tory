@@ -3,11 +3,9 @@ import { getToken } from "next-auth/jwt";
 import fs from 'fs';
 import path from 'path';
 
-// Admin emails - should match the ones in your layout
-const NEXT_PUBLIC_ADMIN_EMAIL = [process.env.ADMIN_EMAIL];
+const NEXT_PUBLIC_ADMIN_EMAIL = [process.env.NEXT_PUBLIC_ADMIN_EMAIL];
 
 
-// Check if user is admin
 async function isAdminUser(request: NextRequest): Promise<boolean> {
   try {
     const token = await getToken({ 
@@ -26,10 +24,8 @@ async function isAdminUser(request: NextRequest): Promise<boolean> {
   }
 }
 
-// Get current environment variables
 export async function GET(request: NextRequest) {
   try {
-    // Check admin authentication
     const isAdmin = await isAdminUser(request);
     if (!isAdmin) {
       return NextResponse.json(
@@ -38,7 +34,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Return current API key settings (masked for security)
     const settings = {
       GROQ_API_KEY: process.env.GROQ_API_KEY ? '***' + process.env.GROQ_API_KEY.slice(-4) : 'Not set',
       STABILITY_API_KEY: process.env.STABILITY_API_KEY ? '***' + process.env.STABILITY_API_KEY.slice(-4) : 'Not set',
