@@ -325,7 +325,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: Check this README and inline code comments
 - **Issues**: Report bugs via GitHub Issues
 - **Discussions**: Join our GitHub Discussions
-- **Email**: Contact us at support@kidztory.com
+- **Email**: Contact us at muhammadsumair224@gmail.com
 
 ---
 
