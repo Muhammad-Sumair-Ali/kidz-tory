@@ -22,7 +22,6 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getUserInitials } from "@/helpers";
-import LoginDialog from "../LoginDialog";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -96,7 +95,15 @@ const UserSection: React.FC = () => {
     );
   }
 
-  return <LoginDialog />;
+  return<Link href={"/login"}>
+   <Button
+    
+            variant="kids"
+            className="text-white font-extrabold text-lg px-6 py-3 rounded-full shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200"
+            >
+            🎉 Login
+          </Button>
+            </Link>
 };
 
 // Admin Link Component

@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,10 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuthentication } from "@/hooks/useAuth";
-import React from "react";
 
-const GoogleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 48 48">
+interface LoginDialogProps {
+  setMobileMenuOpen?: (open: boolean) => void;
+}
+
+const GoogleIcon: React.FC = () => (
+  <svg className="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true">
     <path
       fill="#EA4335"
       d="M24 9.5c3.6 0 6.6 1.4 8.7 3.6l6.5-6.5C35.4 2.5 30.1 0 24 0 14.6 0 6.8 5.8 3 14.2l7.5 5.8C12.1 14.1 17.5 9.5 24 9.5z"
@@ -34,19 +38,20 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const LoginDialog = ({ setMobileMenuOpen }: any) => {
+const LoginDialog: React.FC<LoginDialogProps> = ({ setMobileMenuOpen }) => {
   const { handleSocialLogin } = useAuthentication();
 
-  const handleTriggerClick:any = () => {
-    if (typeof setMobileMenuOpen === "function") setMobileMenuOpen(false);
+  const handleDialogTriggerClick = () => {
+    if (setMobileMenuOpen) setMobileMenuOpen(false);
   };
 
   return (
     <Dialog>
-      <DialogTrigger onClick={handleTriggerClick} asChild>
+      <DialogTrigger asChild>
         <Button
+          onClick={handleDialogTriggerClick}
           variant="kids"
-          className=" text-white font-extrabold text-lg px-6 py-3 rounded-full shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200"
+          className="text-white font-extrabold text-lg px-6 py-3 rounded-full shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200"
         >
           🎉 Login
         </Button>
