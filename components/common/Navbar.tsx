@@ -28,11 +28,7 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 
 // Admin emails - you can modify this list
-const ADMIN_EMAILS = [
-  "admin@kidztory.com",
-  "sumair@kidztory.com", // Add your email here
-  // Add more admin emails as needed
-];
+const ADMIN_EMAILS = [process.env.NEXT_PUBLIC_ADMIN_EMAIL];
 
 const UserSection: React.FC = () => {
   const { data: session } = useSession();

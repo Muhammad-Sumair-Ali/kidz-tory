@@ -37,7 +37,7 @@ const GoogleIcon = () => (
 const LoginDialog = ({ setMobileMenuOpen }: any) => {
   const { handleSocialLogin } = useAuthentication();
 
-  const handleTriggerClick = () => {
+  const handleTriggerClick:any = () => {
     if (typeof setMobileMenuOpen === "function") setMobileMenuOpen(false);
   };
 
