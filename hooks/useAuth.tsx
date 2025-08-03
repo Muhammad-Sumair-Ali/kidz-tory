@@ -31,7 +31,7 @@ export const useAuthentication = () => {
   const handleSocialLogin = async (provider: string) => {
     setIsLoading(true);
     try {
-      await signIn(provider);
+      await signIn(provider,{ callbackUrl: "/" });
       toast.success("Login successfull!");
       router.push("/");
     } catch {
