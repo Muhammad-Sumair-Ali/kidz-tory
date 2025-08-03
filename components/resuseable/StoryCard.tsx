@@ -48,23 +48,23 @@ const StoryCard = ({ story, handleReadStory }: any) => {
   // Social sharing functions
   const shareToFacebook = () => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s Adventure"!`);
+    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s "!`);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
   };
 
   const shareToTwitter = () => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s Adventure"! 📚✨`);
+    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s "! 📚✨`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
   };
 
   const shareToWhatsApp = () => {
-    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s Adventure"! ${window.location.href}`);
+    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s "! ${window.location.href}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent(`Amazing Story: ${story.title}'s Adventure`);
+    const subject = encodeURIComponent(`Amazing Story: ${story.title}'s `);
     const body = encodeURIComponent(`I found this wonderful story and thought you'd enjoy it!\n\nTitle: ${story.title}'s Adventure\nTheme: ${story.theme}\nMood: ${story.mood}\n\nRead it here: ${window.location.href}`);
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
@@ -82,8 +82,8 @@ const StoryCard = ({ story, handleReadStory }: any) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${story.title}'s Adventure`,
-          text: `Check out this amazing story: "${story.title}'s Adventure"!`,
+          title: `${story.title}'s `,
+          text: `Check out this amazing story: "${story.title}'s "!`,
           url: window.location.href,
         });
       } catch (error) {
@@ -102,7 +102,7 @@ const StoryCard = ({ story, handleReadStory }: any) => {
         <CardHeader className="pb-3  h-[100px]">
           <div className="flex items-start justify-between">
             <CardTitle className="text-xl font-bold text-gray-200 group-hover:text-pink-600 transition-colors line-clamp-2">
-              {story.title}&apos;s Adventure
+              {story.title}&apos;s 
             </CardTitle>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>

@@ -230,7 +230,7 @@ const StoryReader: React.FC<StoryReaderProps> = ({ story, isOpen, onClose }) => 
             <div className="flex items-center justify-between flex-wrap gap-2">
               <DialogTitle className={`flex items-center gap-2 text-lg sm:text-2xl ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'} truncate flex-1 min-w-0`}>
                 <BookOpen className={`h-4 w-4 sm:h-6 sm:w-6 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex-shrink-0`} />
-                <span className="truncate">{story.title}&apos;s Adventure</span>
+                <span className="truncate">{story.title}&apos;s </span>
               </DialogTitle>
               <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                 <Button
