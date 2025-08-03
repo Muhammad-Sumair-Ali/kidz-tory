@@ -14,6 +14,13 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import toast from "react-hot-toast";
+import {
   Info,
   Sparkles,
   Globe,
@@ -24,6 +31,12 @@ import {
   Star,
   Play,
   Eye,
+  Share2,
+  Facebook,
+  Twitter,
+  MessageCircle,
+  Copy,
+  Mail,
 } from "lucide-react";
 import Image from "next/image";
 import { getMoodColor, getThemeColor } from "@/helpers/colors";
@@ -31,6 +44,55 @@ import { useState } from "react";
 
 const StoryCard = ({ story, handleReadStory }: any) => {
   const [open, setOpen] = useState(false);
+
+  // Social sharing functions
+  const shareToFacebook = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s Adventure"!`);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
+  };
+
+  const shareToTwitter = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s Adventure"! 📚✨`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+  };
+
+  const shareToWhatsApp = () => {
+    const text = encodeURIComponent(`Check out this amazing story: "${story.title}'s Adventure"! ${window.location.href}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent(`Amazing Story: ${story.title}'s Adventure`);
+    const body = encodeURIComponent(`I found this wonderful story and thought you'd enjoy it!\n\nTitle: ${story.title}'s Adventure\nTheme: ${story.theme}\nMood: ${story.mood}\n\nRead it here: ${window.location.href}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Story link copied to clipboard!');
+    } catch {
+      toast.error('Failed to copy link');
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${story.title}'s Adventure`,
+          text: `Check out this amazing story: "${story.title}'s Adventure"!`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
+      copyToClipboard();
+    }
+  };
   return (
     <div className="z-20">
       <Card
@@ -162,7 +224,7 @@ const StoryCard = ({ story, handleReadStory }: any) => {
               <Image
                 width={360}
                 height={200}
-                src={story.imageUrl}
+                src={story.imageUrl || "/placeholder"}
                 alt="Story illustration"
                 className="object-cover w-[400px] h-[210px] group-hover:scale-105 transition-transform duration-300"
               />
@@ -198,6 +260,63 @@ const StoryCard = ({ story, handleReadStory }: any) => {
               <Eye className="h-4 w-4" />
               Details
             </Button>
+
+            {/* Share Button with Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-600 hover:text-white"
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-700">
+                <DropdownMenuItem 
+                  onClick={handleNativeShare}
+                  className="flex items-center gap-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Quick Share
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={shareToFacebook}
+                  className="flex items-center gap-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                >
+                  <Facebook className="h-4 w-4 text-blue-500" />
+                  Facebook
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={shareToTwitter}
+                  className="flex items-center gap-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                >
+                  <Twitter className="h-4 w-4 text-blue-400" />
+                  Twitter
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={shareToWhatsApp}
+                  className="flex items-center gap-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                >
+                  <MessageCircle className="h-4 w-4 text-green-500" />
+                  WhatsApp
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={shareViaEmail}
+                  className="flex items-center gap-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                >
+                  <Mail className="h-4 w-4 text-red-500" />
+                  Email
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={copyToClipboard}
+                  className="flex items-center gap-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                >
+                  <Copy className="h-4 w-4 text-gray-400" />
+                  Copy Link
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </CardContent>
       </Card>

@@ -24,7 +24,7 @@ import { useAppStore } from "@/store/store";
 import toast from "react-hot-toast";
 
 const StoryForm = () => {
-  const setFormData = useAppStore((state: any) => state.setFormData);
+  const setGeneratedStory = useAppStore((state: any) => state.setGeneratedStory);
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
@@ -88,20 +88,8 @@ const StoryForm = () => {
       const response = await axios.post("/api/generate-story", requestPayload);
       const story = response.data;
       toast.success("Story Generated Successfully");
-      const formData = {
-        id: story.id,
-        ageGroup: JSON.stringify(story.ageGroup),
-        language: story.language,
-        favoriteThings: story.favoriteThings,
-        world: JSON.stringify(story.world),
-        theme: JSON.stringify(story.theme),
-        mood: JSON.stringify(story.mood),
-        story: story.story,
-        imageUrl: story.imageUrl || "",
-        title: story.title || "",
-      };
-      setFormData({ ...formData });
-      router.push("/user-stories");
+      setGeneratedStory(story);
+      router.push("/story-result");
     } catch (error:any) {
       toast.error(error?.response?.data?.error || "Story generation failed!");
     } finally {

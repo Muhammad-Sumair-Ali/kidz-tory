@@ -163,40 +163,42 @@ const HowItWorksPage = () => {
             </p>
           </div>
 
-          <div className="space-y-20">
+          <div className="space-y-12 sm:space-y-16 lg:space-y-20">
             {steps.map((step, index) => (
-              <div key={index} className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12`}>
-                <div className="flex-1 space-y-6">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${step.gradient} flex items-center justify-center shadow-lg`}>
-                      {step.icon}
+              <div key={index} className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-6 sm:gap-8 lg:gap-12`}>
+                <div className="flex-1 space-y-4 sm:space-y-6 w-full">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-r ${step.gradient} flex items-center justify-center shadow-lg`}>
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white">
+                        {step.icon}
+                      </div>
                     </div>
-                    <div className="text-6xl font-bold text-gray-800">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800">
                       {step.number}
                     </div>
                   </div>
                   
-                  <h3 className="text-3xl font-bold text-white">
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-tight">
                     {step.title}
                   </h3>
                   
-                  <p className="text-lg text-gray-300 leading-relaxed">
+                  <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
                     {step.description}
                   </p>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {step.details.map((detail, detailIndex) => (
-                      <div key={detailIndex} className="flex items-center space-x-3">
-                        <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                        <span className="text-gray-300">{detail}</span>
+                      <div key={detailIndex} className="flex items-start space-x-3">
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm sm:text-base text-gray-300 leading-relaxed">{detail}</span>
                       </div>
                     ))}
                   </div>
                 </div>
                 
-                <div className="flex-1">
-                  <div className={`w-full h-80 rounded-2xl bg-gradient-to-br ${step.gradient} opacity-20 flex items-center justify-center`}>
-                    <div className="text-8xl opacity-50">
+                <div className="flex-1 w-full order-first lg:order-none">
+                  <div className={`w-full h-48 sm:h-64 lg:h-80 rounded-xl sm:rounded-2xl bg-gradient-to-br ${step.gradient} opacity-20 flex items-center justify-center`}>
+                    <div className="text-4xl sm:text-6xl lg:text-8xl opacity-50">
                       {step.icon}
                     </div>
                   </div>
