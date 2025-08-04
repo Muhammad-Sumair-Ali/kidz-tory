@@ -2,6 +2,8 @@ import Providers from "@/components/resuseable/Provider";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import type { Metadata } from "next";
+import Script from "next/script";
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: {
@@ -131,11 +133,24 @@ export default async function RootLayout({
           }}
         />
       </head>
+       <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-NL1HX4ZV91"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-NL1HX4ZV91');
+          `}
+        </Script>
       <body>
         <Providers>
           <Toaster 
             position="top-center"
           />
+             <CookieConsent />
           {children}
         </Providers>
       </body>
